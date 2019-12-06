@@ -122,3 +122,19 @@ void TwoWireDevice::writereg(const uint8_t reg, const uint8_t *buf, const uint8_
 	_wire.write(buf, num);
 	_wire.endTransmission();
 }
+
+/**************************************************************************/
+/*!
+    @brief  write short of data to the specified register
+    @param  reg the register to write to
+    @param  value the value to write
+*/
+/**************************************************************************/
+void TwoWireDevice::writereg16(const uint8_t reg, const uint16_t value)
+{
+	_wire.beginTransmission(_i2caddr);
+	_wire.write(reg);
+	_wire.write(value & 0xFF);
+    _wire.write((value & 0xFF00) >> 8);
+	_wire.endTransmission();
+}
