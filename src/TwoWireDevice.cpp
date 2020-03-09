@@ -67,6 +67,15 @@ uint16_t TwoWireDevice::readreg16(const uint8_t reg)
     return ((_wire.read() << 8) | _wire.read());
 }
 
+void TwoWireDevice::writereg16_LE(const uint8_t reg, const uint16_t value)
+{
+    _wire.beginTransmission(_i2caddr);
+    _wire.write(reg);
+	_wire.write((uint8_t) (value >> 8));
+ 	_wire.write((uint8_t) value);
+    _wire.endTransmission();	
+}
+
 uint16_t TwoWireDevice::readreg16_LE(const uint8_t reg)
 {
     _wire.beginTransmission(_i2caddr);
@@ -74,6 +83,15 @@ uint16_t TwoWireDevice::readreg16_LE(const uint8_t reg)
     _wire.endTransmission();
     _wire.requestFrom(_i2caddr, (uint8_t)2);
     return ((_wire.read()) | _wire.read() << 8);
+}
+
+void TwoWireDevice::writereg16_LE(const uint8_t reg, const uint16_t value)
+{
+	_wire.beginTransmission(_i2caddr);
+	_wire.write(reg);
+	_wire.write(value & 0xFF);
+    _wire.write((value & 0xFF00) >> 8);
+	_wire.endTransmission();
 }
 
 uint32_t TwoWireDevice::readreg24(const uint8_t reg)
@@ -123,18 +141,3 @@ void TwoWireDevice::writereg(const uint8_t reg, const uint8_t *buf, const uint8_
 	_wire.endTransmission();
 }
 
-/**************************************************************************/
-/*!
-    @brief  write short of data to the specified register
-    @param  reg the register to write to
-    @param  value the value to write
-*/
-/**************************************************************************/
-void TwoWireDevice::writereg16(const uint8_t reg, const uint16_t value)
-{
-	_wire.beginTransmission(_i2caddr);
-	_wire.write(reg);
-	_wire.write(value & 0xFF);
-    _wire.write((value & 0xFF00) >> 8);
-	_wire.endTransmission();
-}
