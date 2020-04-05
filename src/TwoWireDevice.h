@@ -21,13 +21,16 @@ class TwoWireDevice
 		// Register Type devices
         void 	  readreg(const uint8_t reg, uint8_t *buf, const uint8_t num);
         void 	  writereg(const uint8_t reg, const uint8_t *buf, const uint8_t num);
+        void 	  writereg(const uint8_t reg);
 
         uint8_t   readreg8(const uint8_t reg);
         void      writereg8(const uint8_t reg, const uint8_t value);
 
-        uint16_t  readreg16(const uint8_t reg);
-        uint16_t  readreg16_LE(const uint8_t reg);
-        void      writereg16(const uint8_t reg, const uint16_t value);
+        uint16_t  readreg16_ML(const uint8_t reg);
+        void      writereg16_ML(const uint8_t reg, const uint16_t value);
+
+        uint16_t  readreg16_LM(const uint8_t reg);
+        void      writereg16_LM(const uint8_t reg, const uint16_t value);
 
         uint32_t  readreg24(const uint8_t reg);
 
