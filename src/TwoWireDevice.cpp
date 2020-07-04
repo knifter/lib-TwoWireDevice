@@ -5,22 +5,21 @@
 
 bool TwoWireDevice::begin()
 {
-    _wire.begin();
-    return true;
-}
+    return _wire.begin();
+};
 
 uint8_t TwoWireDevice::read8()
 {
 	_wire.requestFrom(_i2caddr, (uint8_t) 0);
     return _wire.read();
-}
+};
 
 void TwoWireDevice::write8(const uint8_t data)
 {
 	_wire.beginTransmission(_i2caddr);
 	_wire.write(data);
 	_wire.endTransmission();
-}
+};
 
 /**************************************************************************/
 /*!
@@ -35,7 +34,7 @@ void TwoWireDevice::writereg8(const uint8_t reg, const uint8_t value)
 	_wire.write(reg);
 	_wire.write(value);
 	_wire.endTransmission();
-}
+};
 
 /**************************************************************************/
 /*!
@@ -51,7 +50,7 @@ uint8_t TwoWireDevice::readreg8(const uint8_t reg)
     _wire.endTransmission();
     _wire.requestFrom(_i2caddr, (uint8_t)1);
     return _wire.read();
-}
+};
 
 /**
  *  @brief  write uint16_t from the specified register MSB, LSB
@@ -65,7 +64,7 @@ void TwoWireDevice::writereg16_ML(const uint8_t reg, const uint16_t value)
 	_wire.write((uint8_t) (value >> 8));
  	_wire.write((uint8_t) value);
     _wire.endTransmission();	
-}
+};
 
 /**
  *  @brief  read uint16_t from the specified register LSB, MSB
@@ -79,7 +78,7 @@ uint16_t TwoWireDevice::readreg16_ML(const uint8_t reg)
     _wire.endTransmission();
     _wire.requestFrom(_i2caddr, (uint8_t)2);
     return ((_wire.read() << 8) | _wire.read());
-}
+};
 
 void TwoWireDevice::writereg16_LM(const uint8_t reg, const uint16_t value)
 {
@@ -88,7 +87,7 @@ void TwoWireDevice::writereg16_LM(const uint8_t reg, const uint16_t value)
  	_wire.write((uint8_t) value);			// LSB
 	_wire.write((uint8_t) (value >> 8));	// LSB
     _wire.endTransmission();	
-}
+};
 
 uint16_t TwoWireDevice::readreg16_LM(const uint8_t reg)
 {
@@ -97,7 +96,7 @@ uint16_t TwoWireDevice::readreg16_LM(const uint8_t reg)
     _wire.endTransmission();
     _wire.requestFrom(_i2caddr, (uint8_t)2);
     return ((_wire.read()) | _wire.read() << 8);
-}
+};
 
 uint32_t TwoWireDevice::readreg24(const uint8_t reg)
 {
@@ -115,7 +114,7 @@ uint32_t TwoWireDevice::readreg24(const uint8_t reg)
     value |= _wire.read();
 
     return value;
-}
+};
 
 void TwoWireDevice::readreg(const uint8_t reg, uint8_t *buf, const uint8_t num)
 {
@@ -134,9 +133,9 @@ void TwoWireDevice::readreg(const uint8_t reg, uint8_t *buf, const uint8_t num)
         {
 			buf[pos] = _wire.read();
 			pos++;
-		}
-	}
-}
+		};
+	};
+};
 
 void TwoWireDevice::writereg(const uint8_t reg, const uint8_t *buf, const uint8_t num)
 {
@@ -144,10 +143,10 @@ void TwoWireDevice::writereg(const uint8_t reg, const uint8_t *buf, const uint8_
 	_wire.write(reg);
 	_wire.write(buf, num);
 	_wire.endTransmission();
-}
+};
 
 void TwoWireDevice::writereg(const uint8_t reg)
 {
 	_wire.beginTransmission(_i2caddr);
 	_wire.endTransmission();
-}
+};
