@@ -15,10 +15,20 @@ class TwoWireDevice
         bool begin();
 
     protected:
+        // Read/Write plain data / Building blocks
+        void      read(uint8_t* buf, const uint8_t num);
         uint8_t   read8();
         void      write8(const uint8_t data);
 
-		// Register Type devices
+        uint16_t  read16_ML();
+        uint16_t  read16_LM();
+        void      write16_ML(const uint16_t data);
+        void      write16_LM(const uint16_t data);
+
+        uint16_t  read24_ML();
+        uint16_t  read24_LM();
+
+		// 8-bit Register Type devices
         void 	  readreg(const uint8_t reg, uint8_t *buf, const uint8_t num);
         void 	  writereg(const uint8_t reg, const uint8_t *buf, const uint8_t num);
         void 	  writereg(const uint8_t reg);
@@ -32,8 +42,10 @@ class TwoWireDevice
         uint16_t  readreg16_LM(const uint8_t reg);
         void      writereg16_LM(const uint8_t reg, const uint16_t value);
 
-        uint32_t  readreg24(const uint8_t reg);
+        uint32_t  readreg24_LM(const uint8_t reg);
+        uint32_t  readreg24_ML(const uint8_t reg);
 
+        // Members
         uint8_t _i2caddr;
         TwoWire& _wire = Wire;
 };
