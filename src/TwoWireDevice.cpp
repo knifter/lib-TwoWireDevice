@@ -34,16 +34,16 @@ void TwoWireDevice::write8(const uint8_t data)
 void TwoWireDevice::write16_ML(const uint16_t data)
 {
 	_wire.beginTransmission(_i2caddr);
-	_wire.write((uint8_t) data >> 8);
-    _wire.write((uint8_t) data & 0xFF);
+	_wire.write(data >> 8);
+    _wire.write(data & 0xFF);
 	_wire.endTransmission();
 };
 
 void TwoWireDevice::write16_LM(const uint16_t data)
 {
 	_wire.beginTransmission(_i2caddr);
-    _wire.write((uint8_t) data & 0xFF);
-	_wire.write((uint8_t) data >> 8);
+    _wire.write(data & 0xFF);
+	_wire.write(data >> 8);
 	_wire.endTransmission();
 };
 
@@ -54,7 +54,7 @@ void TwoWireDevice::write16_LM(const uint16_t data)
  */
 uint16_t TwoWireDevice::read16_ML()
 {
-    _wire.requestFrom(_i2caddr, (uint8_t)2);
+    _wire.requestFrom(_i2caddr, (uint8_t) 2);
     return ((_wire.read() << 8) | _wire.read());
 };
 
@@ -81,22 +81,26 @@ uint16_t TwoWireDevice::read24_LM()
     return ((_wire.read()) | _wire.read() << 8 | _wire.read() << 16);
 };
 
-void TwoWireDevice::read(uint8_t* buf, const uint8_t num)
+int TwoWireDevice::read(uint8_t* buf, const uint8_t num)
 {
-	uint8_t pos = 0;
+	uint8_t cnt = 0;
 
 	//on arduino we need to read in 32 byte chunks
-	while(pos < num)
+	while(cnt < num)
     {
-		uint8_t read_now = min(32, (num - pos));
-		_wire.requestFrom(_i2caddr, read_now);
+		uint8_t read_now = min(32, (num - cnt));
+		// Serial.printf("requestFrom(%x, %d)\n", _i2caddr, read_now);
+		uint8_t has_read = _wire.requestFrom(_i2caddr, read_now);
+		if(has_read != read_now)
+			return -1;
 
 		for(int i=0; i<read_now; i++)
         {
-			buf[pos] = _wire.read();
-			pos++;
+			buf[cnt] = _wire.read();
+			cnt++;
 		};
 	};
+	return cnt;
 };
 
 /**************************************************************************/

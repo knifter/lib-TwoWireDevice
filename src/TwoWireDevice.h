@@ -16,7 +16,7 @@ class TwoWireDevice
 
     protected:
         // Read/Write plain data / Building blocks
-        void      read(uint8_t* buf, const uint8_t num);
+        int       read(uint8_t* buf, const uint8_t num);
         uint8_t   read8();
         void      write8(const uint8_t data);
 
