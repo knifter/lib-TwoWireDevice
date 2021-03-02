@@ -13,6 +13,8 @@ class TwoWireDevice
 		TwoWireDevice(const uint8_t addr) : _i2caddr(addr), _wire(Wire) {};
 
         bool begin();
+        uint8_t last_error();
+        const char* last_error_text();
 
     protected:
         // Read/Write plain data / Building blocks
@@ -47,6 +49,7 @@ class TwoWireDevice
 
         // Members
         uint8_t _i2caddr;
+        uint8_t _last_error;
         TwoWire& _wire = Wire;
 };
 
