@@ -101,13 +101,24 @@ uint16_t TwoWireDevice::read16_LM()
     return ((_wire.read()) | _wire.read() << 8);
 };
 
-uint16_t TwoWireDevice::read24_ML()
+uint32_t TwoWireDevice::read24_ML()
 {
     _wire.requestFrom(_i2caddr, (uint8_t)3);
+
+	// union {
+	// 	uint8_t bytes[4];
+	// 	uint32_t value;
+	// } res;
+	// res.bytes[3] = 0;
+	// res.bytes[2] = _wire.read();
+	// res.bytes[1] = _wire.read();
+	// res.bytes[0] = _wire.read();
+	// return res.value;
+
     return ((_wire.read() << 16) | _wire.read() << 8 | _wire.read());
 };
 
-uint16_t TwoWireDevice::read24_LM()
+uint32_t TwoWireDevice::read24_LM()
 {
     _wire.requestFrom(_i2caddr, (uint8_t)3);
     return ((_wire.read()) | _wire.read() << 8 | _wire.read() << 16);
@@ -219,7 +230,7 @@ uint32_t TwoWireDevice::readreg24_LM(const uint8_t reg)
 uint32_t TwoWireDevice::readreg24_ML(const uint8_t reg)
 {
     write8(reg);
-    return read24_LM();
+    return read24_ML();
 };
 
 void TwoWireDevice::readreg(const uint8_t reg, uint8_t *buf, const uint8_t num)

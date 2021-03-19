@@ -6,6 +6,9 @@
 #include <Wire.h>
 #include <Arduino.h>
 
+/* Adafruit usesd _LE (litte-endian) suffix for _LM
+ */
+
 class TwoWireDevice
 {
     public:
@@ -27,8 +30,8 @@ class TwoWireDevice
         void      write16_ML(const uint16_t data);
         void      write16_LM(const uint16_t data);
 
-        uint16_t  read24_ML();
-        uint16_t  read24_LM();
+        uint32_t  read24_ML();
+        uint32_t  read24_LM();
 
 		// 8-bit Register Type devices
         void 	  readreg(const uint8_t reg, uint8_t *buf, const uint8_t num);
