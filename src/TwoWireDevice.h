@@ -64,6 +64,10 @@ class TwoWireDevice
         uint8_t _i2caddr;
         uint8_t _last_error;
         TwoWire& _wire = Wire;
+
+    private:
+	TwoWireDevice(const TwoWireDevice&);
+	TwoWireDevice& operator=(const TwoWireDevice&);
 };
 
 #endif //__TWOWIREDEVICE_H
