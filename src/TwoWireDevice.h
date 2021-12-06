@@ -64,10 +64,11 @@ class TwoWireDevice
         uint8_t _i2caddr;
         uint8_t _last_error;
         TwoWire& _wire = Wire;
-
-    private:
-	TwoWireDevice(const TwoWireDevice&);
-	TwoWireDevice& operator=(const TwoWireDevice&);
+ 
+    public: // more readable errors if public
+        // TwoWireDevices are by default not copyable
+        TwoWireDevice(const TwoWireDevice&) = delete;
+        TwoWireDevice& operator=(const TwoWireDevice&) = delete;
 };
 
 #endif //__TWOWIREDEVICE_H
