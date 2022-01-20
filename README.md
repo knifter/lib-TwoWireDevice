@@ -1,5 +1,5 @@
 # Introduction
-Arduino librabry to wrap TwoWire device classes. 
+Arduino/ESP32 library to wrap TwoWire device classes. 
 
 While writing several supoport libraries for I2C/TwoWire devices it became cumbersome to keep implementing the read/write functions and sorting out the byte order for each device. Also most libraries I found as an example all assumed that 'Wire' was going to be used as the only TwoWire bus. I wanted to be able to support several busses and several devices on each bus. On top of that each library was randomly reconfiguring io-pins, bus speeds etc which would make them conflict each other.
 My view on this is that a developer should first configure the bus, speed, pins etc and then instantiate devices on them.
@@ -8,6 +8,8 @@ That is what this libary supports.
 It's major features are:
  * A common place to store the read/write address/register functions for several bit widths (8/16/24) so libraries can share them.
  * These devices all supprt which 'Wire' device you wish to use and on which address. Therefor you can easily add multiple sensors on one or more buses and make multiple instances of this library.
+
+There is a less sophisticated twin: [lib-SPIDevice](https://github.com/knifter/lib-SPIDevice)
 
 # Usage
 ## Code
@@ -22,7 +24,7 @@ class MyDevice : public TwoWireDevice
 		//con-/destructors
 		MyDevice(TwoWire& wire, const uint8_t addr = MYDEVICE_ADDRESS_DEFAULT)  : TwoWireDevice(wire, addr) {};
 		MyDevice(const uint8_t addr = MYDEVICE_ADDRESS_DEFAULT) : TwoWireDevice(addr) {};
-    ~SHT3X() {};
+    		~MyDevice() {};
 };
 ```
 
@@ -52,7 +54,7 @@ Personally I find it good practice to, at first, disable copy constructors and a
 ```
 
 ## PlatformIO
-I'm a big advocate of [Platform-IO](https://platformio.org/platformio-ide). To use this library with you PlatformIO project add this to you platformio.ini environment:
+I'm an advocate of [Platform-IO](https://platformio.org/platformio-ide). To use this library with your PlatformIO project, add this to you platformio.ini environment:
 ``` 
 lib_deps =
   https://github.com/knifter/lib-TwoWireDevice
@@ -60,5 +62,24 @@ lib_deps =
 
 ## Examples
 Some example devices are between my github repositories, like:
- * [SHT31 Temperature/Humidity sensor](https://github.com/knifter/lib-SHT3x)
- * [BME280 Environmental Sensor](https://github.com/knifter/lib-BME280)
+#### Environmental sensors
+ * [x] [SHT30/31/35 Temperature/Humidity sensor](https://github.com/knifter/lib-SHT3x)
+ * [ ] [SHT40/41/45 Temperature/Humidity sensor](https://github.com/knifter/lib-SHT4x)
+ * [x] [CCS811 Gas Sensor](https://github.com/knifter/lib-CCS811)
+ * [x] [BME280 Humidity/Pressure/Temperature Environmental Sensor](https://github.com/knifter/lib-BME280)
+
+#### Voltage/Current Sensors
+ * [x] [INA233 Bi-directional Voltage/Current/Power/Energy monitor](https://github.com/knifter/lib-INA233)
+ * [x] [INA219 Voltage/Current Sensor](https://github.com/knifter/lib-INA219)
+#### Audio
+ * [x] [STA320 Full-Digital Class-D Amplifier](https://github.com/knifter/lib-STA320)
+ * [x] [WM8805 SPDIF Transceiver](https://github.com/knifter/lib-WM8805)
+
+#### Other
+ * [x] [CPMS12 Compass Module with Gyro sensor-fusion](https://github.com/knifter/lib-CMPS12)
+ * [x] [PCF8574 Remote 8-bit IO-Expander](https://github.com/knifter/lib-PCF8574)
+ * [x] [MCP23008 Remote 8-bit IO-Expander](https://github.com/knifter/lib-MCP23008)
+
+#### TODO
+ * [ ] [MCP2515 CAN Controller](https://github.com/knifter/lib-MCP2515)
+ 
