@@ -3,8 +3,10 @@
 #include "Arduino.h"
 #include <stdio.h>
 
-bool TwoWireDevice::begin()
+bool TwoWireDevice::begin(uint8_t address)
 {
+    if(address)
+        _i2caddr = address;
     return _wire.begin();
 };
 
