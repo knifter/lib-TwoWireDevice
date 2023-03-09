@@ -148,6 +148,21 @@ int TwoWireDevice::read(uint8_t* buf, const uint8_t num)
 	return cnt;
 };
 
+void TwoWireDevice::write(const uint8_t* buf, const uint8_t num)
+{
+	uint8_t cnt = 0;
+
+	_wire.beginTransmission(_i2caddr);
+
+	//on arduino we need to read in 32 byte chunks
+	while(cnt < num)
+		_wire.write(buf[cnt++]);
+
+	_last_error = _wire.endTransmission();
+
+	return;
+};
+
 /**************************************************************************/
 /*!
     @brief  write one byte of data to the specified register
