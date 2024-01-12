@@ -14,7 +14,8 @@ class TwoWireDevice
     public:
         TwoWireDevice(TwoWire& wire, const uint8_t addr) : _i2caddr(addr), _wire(wire) {};
         TwoWireDevice(const uint8_t addr) : _i2caddr(addr), _wire(Wire) {};
-
+        virtual ~TwoWireDevice() {};
+        
         bool begin(uint8_t address = 0);
         uint8_t last_error();
         const char* last_error_text();
