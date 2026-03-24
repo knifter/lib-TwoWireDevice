@@ -10,6 +10,14 @@ bool TwoWireDevice::begin(uint8_t address)
     return _wire.begin();
 };
 
+bool TwoWireDevice::ping()
+{
+    _wire.beginTransmission(_i2caddr);
+    if(_wire.endTransmission() != 0)
+        return false;
+	return true;
+};
+
 // typedef enum {
 //     I2C_ERROR_OK = 0,
 //     I2C_ERROR_DEV,

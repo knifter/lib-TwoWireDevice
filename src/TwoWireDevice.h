@@ -17,6 +17,7 @@ class TwoWireDevice
         virtual ~TwoWireDevice() {};
         
         bool begin(uint8_t address = 0);
+        bool ping();
         uint8_t last_error();
         const char* last_error_text();
 
