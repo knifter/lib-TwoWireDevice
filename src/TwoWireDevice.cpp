@@ -14,7 +14,7 @@ bool TwoWireDevice::ping()
 {
     _wire.beginTransmission(_i2caddr);
     if(_wire.endTransmission() != 0)
-        return false;
+		return false;
 	return true;
 };
 
