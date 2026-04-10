@@ -3,6 +3,20 @@
 #include "Arduino.h"
 #include <stdio.h>
 
+void TwoWireDevice::_beginTransmission()
+{
+    if(_wire.getClock() > max_clock())
+        _wire.setClock(max_clock());
+    _wire.beginTransmission(_i2caddr);
+};
+
+uint8_t TwoWireDevice::_requestFrom(uint8_t len)
+{
+    if(_wire.getClock() > max_clock())
+        _wire.setClock(max_clock());
+    return _wire.requestFrom(_i2caddr, len);
+};
+
 bool TwoWireDevice::begin(uint8_t address)
 {
     if(address)
@@ -12,7 +26,7 @@ bool TwoWireDevice::begin(uint8_t address)
 
 bool TwoWireDevice::ping()
 {
-    _wire.beginTransmission(_i2caddr);
+    _beginTransmission();
     if(_wire.endTransmission() != 0)
 		return false;
 	return true;
@@ -57,7 +71,7 @@ const char* TwoWireDevice::last_error_text()
  */
 uint8_t TwoWireDevice::read8()
 {
-	_wire.requestFrom(_i2caddr, (uint8_t) 1);
+	_requestFrom((uint8_t) 1);
     return _wire.read();
 };
 
@@ -68,14 +82,14 @@ uint8_t TwoWireDevice::read8()
  */
 void TwoWireDevice::write8(const uint8_t data)
 {
-	_wire.beginTransmission(_i2caddr);
+	_beginTransmission();
 	_wire.write(data);
 	_last_error = _wire.endTransmission();
 };
 
 void TwoWireDevice::write16_ML(const uint16_t data)
 {
-	_wire.beginTransmission(_i2caddr);
+	_beginTransmission();
 	_wire.write(data >> 8);
     _wire.write(data & 0xFF);
 	_last_error = _wire.endTransmission();
@@ -83,7 +97,7 @@ void TwoWireDevice::write16_ML(const uint16_t data)
 
 void TwoWireDevice::write16_LM(const uint16_t data)
 {
-	_wire.beginTransmission(_i2caddr);
+	_beginTransmission();
     _wire.write(data & 0xFF);
 	_wire.write(data >> 8);
 	_last_error = _wire.endTransmission();
@@ -96,7 +110,7 @@ void TwoWireDevice::write16_LM(const uint16_t data)
  */
 uint16_t TwoWireDevice::read16_ML()
 {
-    _wire.requestFrom(_i2caddr, (uint8_t) 2);
+    _requestFrom((uint8_t) 2);
     return ((_wire.read() << 8) | _wire.read());
 };
 
@@ -107,13 +121,13 @@ uint16_t TwoWireDevice::read16_ML()
  */
 uint16_t TwoWireDevice::read16_LM()
 {
-    _wire.requestFrom(_i2caddr, (uint8_t)2);
+    _requestFrom((uint8_t)2);
     return ((_wire.read()) | _wire.read() << 8);
 };
 
 uint32_t TwoWireDevice::read24_ML()
 {
-    _wire.requestFrom(_i2caddr, (uint8_t)3);
+    _requestFrom((uint8_t)3);
 
 	// union {
 	// 	uint8_t bytes[4];
@@ -130,7 +144,7 @@ uint32_t TwoWireDevice::read24_ML()
 
 uint32_t TwoWireDevice::read24_LM()
 {
-    _wire.requestFrom(_i2caddr, (uint8_t)3);
+    _requestFrom((uint8_t)3);
     return ((_wire.read()) | _wire.read() << 8 | _wire.read() << 16);
 };
 
@@ -143,7 +157,7 @@ int TwoWireDevice::read(uint8_t* buf, const uint8_t num)
     {
 		uint8_t read_now = min(32, (num - cnt));
 		// Serial.printf("requestFrom(%x, %d)\n", _i2caddr, read_now);
-		uint8_t has_read = _wire.requestFrom(_i2caddr, read_now);
+		uint8_t has_read = _requestFrom(read_now);
 		if(has_read != read_now)
 			return -1;
 
@@ -160,7 +174,7 @@ void TwoWireDevice::write(const uint8_t* buf, const uint8_t num)
 {
 	uint8_t cnt = 0;
 
-	_wire.beginTransmission(_i2caddr);
+	_beginTransmission();
 
 	//on arduino we need to read in 32 byte chunks
 	while(cnt < num)
@@ -180,7 +194,7 @@ void TwoWireDevice::write(const uint8_t* buf, const uint8_t num)
 /**************************************************************************/
 void TwoWireDevice::writereg8(const uint8_t reg, const uint8_t value)
 {
-	_wire.beginTransmission(_i2caddr);
+	_beginTransmission();
 	_wire.write(reg);
 	_wire.write(value);
 	_last_error = _wire.endTransmission();
@@ -206,7 +220,7 @@ uint8_t TwoWireDevice::readreg8(const uint8_t reg)
  */
 void TwoWireDevice::writereg16_ML(const uint8_t reg, const uint16_t value)
 {
-    _wire.beginTransmission(_i2caddr);
+    _beginTransmission();
     _wire.write(reg);
 	_wire.write((uint8_t) (value >> 8));
  	_wire.write((uint8_t) value);
@@ -227,7 +241,7 @@ uint16_t TwoWireDevice::readreg16_ML(const uint8_t reg)
 
 void TwoWireDevice::writereg16_LM(const uint8_t reg, const uint16_t value)
 {
-    _wire.beginTransmission(_i2caddr);
+    _beginTransmission();
     _wire.write(reg);
  	_wire.write((uint8_t) value);			// LSB
 	_wire.write((uint8_t) (value >> 8));	// LSB
@@ -236,12 +250,12 @@ void TwoWireDevice::writereg16_LM(const uint8_t reg, const uint16_t value)
 
 uint16_t TwoWireDevice::readreg16_LM(const uint8_t reg)
 {
-    // _wire.beginTransmission(_i2caddr);
+    // _beginTransmission();
     // _wire.write(reg);
     // _wire.endTransmission();
     write8(reg);
     
-    // _wire.requestFrom(_i2caddr, (uint8_t)2);
+    // _requestFrom((uint8_t)2);
     // return ((_wire.read()) | _wire.read() << 8);
     return read16_LM();
 };
@@ -266,11 +280,11 @@ void TwoWireDevice::readreg(const uint8_t reg, uint8_t *buf, const uint8_t num)
 	while(pos < num)
     {
 		uint8_t read_now = min(32, (num - pos));
-		_wire.beginTransmission(_i2caddr);
+		_beginTransmission();
 		_wire.write(reg + pos);
 		_last_error = _wire.endTransmission();
 		//TODO: check requestFrom result?
-		_wire.requestFrom(_i2caddr, read_now);
+		_requestFrom(read_now);
 
 		for(int i=0; i<read_now; i++)
         {
@@ -282,7 +296,7 @@ void TwoWireDevice::readreg(const uint8_t reg, uint8_t *buf, const uint8_t num)
 
 void TwoWireDevice::writereg(const uint8_t reg, const uint8_t *buf, const uint8_t num)
 {
-	_wire.beginTransmission(_i2caddr);
+	_beginTransmission();
 	_wire.write(reg);
 	_wire.write(buf, num);
 	_last_error = _wire.endTransmission();
@@ -290,6 +304,6 @@ void TwoWireDevice::writereg(const uint8_t reg, const uint8_t *buf, const uint8_
 
 void TwoWireDevice::writereg(const uint8_t reg)
 {
-	_wire.beginTransmission(_i2caddr);
+	_beginTransmission();
 	_last_error = _wire.endTransmission();
 };

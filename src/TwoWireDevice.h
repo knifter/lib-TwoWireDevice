@@ -6,6 +6,9 @@
 #include <Wire.h>
 #include <Arduino.h>
 
+// I2C supports up to 2MHz, but then all twowire devices must set max_clock to 400kHz
+#define TWOWIRE_DEFAULT_MAX_CLOCK   400E6
+
 /* Adafruit usesd _LE (litte-endian) suffix for _LM
  */
 
@@ -20,6 +23,8 @@ class TwoWireDevice
         bool ping();
         uint8_t last_error();
         const char* last_error_text();
+
+        virtual uint32_t max_clock() const { return TWOWIRE_DEFAULT_MAX_CLOCK; };
 
     protected:
         // Read/Write plain data / Building blocks
@@ -66,6 +71,10 @@ class TwoWireDevice
         uint8_t _i2caddr;
         uint8_t _last_error;
         TwoWire& _wire = Wire;
+
+    private:
+        void _beginTransmission();
+        uint8_t _requestFrom(uint8_t len);
 
     public: // more readable errors if public
         // TwoWireDevices are by default not copyable
