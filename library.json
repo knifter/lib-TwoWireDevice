@@ -1,0 +1,23 @@
+{
+  "name": "lib-TwoWireDevice",
+  "version": "1.1.0",
+  "description": "Base class for Arduino I2C (TwoWire) device drivers. Provides shared read/write helpers for 8/16/24-bit registers in both byte orders, multi-bus support, per-device bus speed limiting, and disabled copy semantics.",
+  "keywords": ["i2c", "twowire", "wire", "sensor", "driver", "esp32", "arduino"],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/knifter/lib-TwoWireDevice"
+  },
+  "authors": {
+    "name": "Tijs van Roon",
+    "email": "knifter@gmail.com",
+    "url": "https://github.com/knifter",
+    "maintainer": true
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/knifter/lib-TwoWireDevice",
+  "frameworks": "arduino",
+  "platforms": "*",
+  "build": {
+    "srcDir": "src"
+  }
+}
