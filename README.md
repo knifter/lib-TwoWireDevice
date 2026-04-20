@@ -83,3 +83,6 @@ Some example devices are between my github repositories, like:
 #### TODO
  * [ ] [MCP2515 CAN Controller](https://github.com/knifter/lib-MCP2515)
  
+
+## Author
+This software is written by [Tijs van Roon](https://github.com/knifter). It is free to use under the [MIT License](LICENSE).
