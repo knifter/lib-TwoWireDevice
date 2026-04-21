@@ -27,9 +27,11 @@ bool TwoWireDevice::begin(uint8_t address)
 bool TwoWireDevice::ping()
 {
     _beginTransmission();
-    if(_wire.endTransmission() != 0)
-		return false;
-	return true;
+	_last_error = _wire.endTransmission();
+    if(_last_error == 0)
+		return true;
+	// Serial.printf("0x%02x : _last_error = %d (%s)\n", _i2caddr, _last_error, last_error_text());
+	return false;
 };
 
 // typedef enum {
