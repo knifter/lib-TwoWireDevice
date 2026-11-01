@@ -113,7 +113,9 @@ void TwoWireDevice::write16_LM(const uint16_t data)
 uint16_t TwoWireDevice::read16_ML()
 {
     _requestFrom((uint8_t) 2);
-    return ((_wire.read() << 8) | _wire.read());
+    uint8_t msb = _wire.read();
+    uint8_t lsb = _wire.read();
+    return (((uint16_t)msb << 8) | lsb);
 };
 
 /**
@@ -124,7 +126,9 @@ uint16_t TwoWireDevice::read16_ML()
 uint16_t TwoWireDevice::read16_LM()
 {
     _requestFrom((uint8_t)2);
-    return ((_wire.read()) | _wire.read() << 8);
+    uint8_t lsb = _wire.read();
+    uint8_t msb = _wire.read();
+    return (lsb | (uint16_t)msb << 8);
 };
 
 uint32_t TwoWireDevice::read24_ML()
@@ -141,13 +145,19 @@ uint32_t TwoWireDevice::read24_ML()
 	// res.bytes[0] = _wire.read();
 	// return res.value;
 
-    return ((_wire.read() << 16) | _wire.read() << 8 | _wire.read());
+    uint8_t b2 = _wire.read();
+    uint8_t b1 = _wire.read();
+    uint8_t b0 = _wire.read();
+    return (((uint32_t)b2 << 16) | (uint32_t)b1 << 8 | b0);
 };
 
 uint32_t TwoWireDevice::read24_LM()
 {
     _requestFrom((uint8_t)3);
-    return ((_wire.read()) | _wire.read() << 8 | _wire.read() << 16);
+    uint8_t b0 = _wire.read();
+    uint8_t b1 = _wire.read();
+    uint8_t b2 = _wire.read();
+    return (b0 | (uint32_t)b1 << 8 | (uint32_t)b2 << 16);
 };
 
 int TwoWireDevice::read(uint8_t* buf, const uint8_t num)
