@@ -6,8 +6,17 @@
 #include <Wire.h>
 #include <Arduino.h>
 
-// I2C supports up to 2MHz, but then all twowire devices must set max_clock to 400kHz
-#define TWOWIRE_DEFAULT_MAX_CLOCK   400E6
+// Devices not specifying their max clock will make the bus default to 400 kHz
+#define TWOWIRE_DEFAULT_MAX_CLOCK   400000
+
+// Highest clock the platform supports: start the bus at this speed, each device's begin() lowers it
+#ifndef TWOWIRE_BUS_MAX_CLOCK
+    #if defined(ARDUINO_ARCH_ESP32)
+        #define TWOWIRE_BUS_MAX_CLOCK   1000000     // Arduino-ESP32 clamps higher values to 1 MHz
+    #else
+        #define TWOWIRE_BUS_MAX_CLOCK   400000
+    #endif
+#endif
 
 /* Adafruit usesd _LE (litte-endian) suffix for _LM
  */

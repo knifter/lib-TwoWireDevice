@@ -2,19 +2,17 @@
 
 #include "Arduino.h"
 #include <stdio.h>
+#if defined(ARDUINO_ARCH_ESP32)
+    #include "esp32-hal-i2c.h"
+#endif
 
 void TwoWireDevice::_beginTransmission()
 {
-    if(_wire.getClock() > max_clock())
-        _wire.setClock(max_clock());
     _wire.beginTransmission(_i2caddr);
 };
 
 uint8_t TwoWireDevice::_requestFrom(uint8_t len)
 {
-    if(_wire.getClock() > max_clock())
-        _wire.setClock(max_clock());
-
 		uint8_t got = _wire.requestFrom(_i2caddr, len);
     _last_error = (got == len) ? ERROR_OK : ERROR_SHORTREAD;
     return got;
@@ -24,7 +22,20 @@ bool TwoWireDevice::begin(uint8_t address)
 {
     if(address)
         _i2caddr = address;
-    return _wire.begin();
+
+#if defined(ARDUINO_ARCH_ESP32)
+    // The application must start the bus (with its pins) before the devices
+    if(!i2cIsInit(_wire.getBusNum()))
+    {
+        _last_error = ERROR_BUS_NO_BEGIN;
+        return false;
+    };
+#endif
+
+    // Lower the bus clock before any traffic, so this device never sees a clock it can't follow
+    if(_wire.getClock() > max_clock())
+        _wire.setClock(max_clock());
+    return true;
 };
 
 bool TwoWireDevice::ping()
