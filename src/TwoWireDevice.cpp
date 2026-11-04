@@ -27,7 +27,7 @@ bool TwoWireDevice::begin(uint8_t address)
     // The application must start the bus (with its pins) before the devices
     if(!i2cIsInit(_wire.getBusNum()))
     {
-        _last_error = ERROR_BUS_NO_BEGIN;
+        _last_error = ERROR_NO_BEGIN_BUS;
         return false;
     };
 #endif
@@ -66,6 +66,7 @@ const char* TwoWireDevice::last_error_text()
     	case TwoWireDevice::ERROR_CONTINUE: 	return "OK CONTINUE";
     	case TwoWireDevice::ERROR_NO_BEGIN: 	return "No beginTransaction()";
     	case TwoWireDevice::ERROR_SHORTREAD: 	return "Short read";
+    	case TwoWireDevice::ERROR_NO_BEGIN_BUS: return "Bus not started";
 		default: return "Unknown error";
 	};
 };
@@ -303,6 +304,7 @@ void TwoWireDevice::readreg(const uint8_t reg, uint8_t *buf, const uint8_t num)
 	uint8_t pos = 0;
 
 	//on arduino we need to read in 32 byte chunks
+	// Each chunk re-addresses at reg + pos: assumes the device auto-increments its register pointer
 	while(pos < num)
     {
 		uint8_t read_now = min(32, (num - pos));
