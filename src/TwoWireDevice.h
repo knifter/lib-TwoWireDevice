@@ -27,15 +27,16 @@ class TwoWireDevice
         enum error_t : uint8_t
         {
             ERROR_OK = 0,
-            ERROR_DATALONG,     // 1
-            ERROR_NACK_ADDR,    // 2
-            ERROR_NACK_DATA,    // 3
-            ERROR_OTHER,        // 4
-            ERROR_TIMEOUT,      // 5
-            ERROR_MEMORY,       // 6
-            ERROR_CONTINUE,     // 7
-            ERROR_NO_BEGIN,     // 8
-            ERROR_SHORTREAD = 32// 32    (This lib only)
+            ERROR_DATALONG,         // 1    Too much data?
+            ERROR_NACK_ADDR,        // 2    Device did not ack on address write
+            ERROR_NACK_DATA,        // 3    Device did not ack the read
+            ERROR_OTHER,            // 4
+            ERROR_TIMEOUT,          // 5
+            ERROR_MEMORY,           // 6
+            ERROR_CONTINUE,         // 7
+            ERROR_NO_BEGIN,         // 8    No beginTransaction called (internal)
+            ERROR_SHORTREAD = 32,   // 32    (This lib only)
+            ERROR_NO_BEGIN_BUS,     // 33    Wire.begin() was not called before device.begin()
         };
         error_t     last_error();
         const char* last_error_text();

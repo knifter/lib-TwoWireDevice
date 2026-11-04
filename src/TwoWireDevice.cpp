@@ -14,7 +14,10 @@ uint8_t TwoWireDevice::_requestFrom(uint8_t len)
 {
     if(_wire.getClock() > max_clock())
         _wire.setClock(max_clock());
-    return _wire.requestFrom(_i2caddr, len);
+
+		uint8_t got = _wire.requestFrom(_i2caddr, len);
+    _last_error = (got == len) ? ERROR_OK : ERROR_SHORTREAD;
+    return got;
 };
 
 bool TwoWireDevice::begin(uint8_t address)
