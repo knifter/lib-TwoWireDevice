@@ -21,10 +21,24 @@ class TwoWireDevice
         
         bool begin(uint8_t address = 0);
         bool ping();
-        uint8_t last_error();
-        const char* last_error_text();
 
         virtual uint32_t max_clock() const { return TWOWIRE_DEFAULT_MAX_CLOCK; };
+
+        enum error_t : uint8_t
+        {
+            ERROR_OK = 0,
+            ERROR_DATALONG,     // 1
+            ERROR_NACK_ADDR,    // 2
+            ERROR_NACK_DATA,    // 3
+            ERROR_OTHER,        // 4
+            ERROR_TIMEOUT,      // 5
+            ERROR_MEMORY,       // 6
+            ERROR_CONTINUE,     // 7
+            ERROR_NO_BEGIN,     // 8
+            ERROR_SHORTREAD = 32// 32    (This lib only)
+        };
+        error_t     last_error();
+        const char* last_error_text();
 
     protected:
         // Read/Write plain data / Building blocks
@@ -69,7 +83,7 @@ class TwoWireDevice
 
         // Members
         uint8_t _i2caddr;
-        uint8_t _last_error;
+        uint8_t _last_error = 0;
         TwoWire& _wire = Wire;
 
     private:

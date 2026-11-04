@@ -34,34 +34,24 @@ bool TwoWireDevice::ping()
 	return false;
 };
 
-// typedef enum {
-//     I2C_ERROR_OK = 0,
-//     I2C_ERROR_DEV,
-//     I2C_ERROR_ACK = 2,
-//     I2C_ERROR_TIMEOUT,
-//     I2C_ERROR_BUS,
-//     I2C_ERROR_BUSY,
-//     I2C_ERROR_MEMORY,
-//     I2C_ERROR_CONTINUE,
-//     I2C_ERROR_NO_BEGIN
-// } i2c_err_t;
-uint8_t TwoWireDevice::last_error()
+TwoWireDevice::error_t TwoWireDevice::last_error()
 {
-	return _last_error;
+	return static_cast<error_t>(_last_error);
 };
 const char* TwoWireDevice::last_error_text()
 {
 	switch(_last_error)
 	{
-		case 0: return "OK";
-		case 1: return "DEVICE";
-    	case 2: return "No ACK from device.";
-    	case 3: return "TIMEOUT";
-    	case 4: return "BUS";
-    	case 5: return "BUSY";
-    	case 6: return "MEMORY";
-    	case 7: return "OK CONTINUE";
-    	case 8: return "No beginTransaction()";
+		case TwoWireDevice::ERROR_OK: 			return "OK";
+		case TwoWireDevice::ERROR_DATALONG: 	return "Data too long";
+    	case TwoWireDevice::ERROR_NACK_ADDR: 	return "NACK on address";
+    	case TwoWireDevice::ERROR_NACK_DATA: 	return "NACK on data";
+    	case TwoWireDevice::ERROR_OTHER: 		return "BUS/Other";
+    	case TwoWireDevice::ERROR_TIMEOUT: 		return "Timeout";
+    	case TwoWireDevice::ERROR_MEMORY: 		return "MEMORY";
+    	case TwoWireDevice::ERROR_CONTINUE: 	return "OK CONTINUE";
+    	case TwoWireDevice::ERROR_NO_BEGIN: 	return "No beginTransaction()";
+    	case TwoWireDevice::ERROR_SHORTREAD: 	return "Short read";
 		default: return "Unknown error";
 	};
 };
@@ -222,6 +212,8 @@ void TwoWireDevice::writereg8(const uint8_t reg, const uint8_t value)
 uint8_t TwoWireDevice::readreg8(const uint8_t reg)
 {
     write8(reg);
+    if(_last_error)
+        return 0xFF;
     return read8();
 };
 
@@ -247,6 +239,8 @@ void TwoWireDevice::writereg16_ML(const uint8_t reg, const uint16_t value)
 uint16_t TwoWireDevice::readreg16_ML(const uint8_t reg)
 {
     write8(reg);
+    if(_last_error)
+        return 0xFFFF;
     return read16_ML();
 };
 
@@ -266,7 +260,9 @@ uint16_t TwoWireDevice::readreg16_LM(const uint8_t reg)
     // _wire.write(reg);
     // _wire.endTransmission();
     write8(reg);
-    
+    if(_last_error)
+        return 0xFFFF;
+
     // _requestFrom((uint8_t)2);
     // return ((_wire.read()) | _wire.read() << 8);
     return read16_LM();
@@ -275,12 +271,16 @@ uint16_t TwoWireDevice::readreg16_LM(const uint8_t reg)
 uint32_t TwoWireDevice::readreg24_LM(const uint8_t reg)
 {
     write8(reg);
+    if(_last_error)
+        return 0xFFFFFF;
     return read24_LM();
 };
 
 uint32_t TwoWireDevice::readreg24_ML(const uint8_t reg)
 {
     write8(reg);
+    if(_last_error)
+        return 0xFFFFFF;
     return read24_ML();
 };
 
@@ -295,6 +295,8 @@ void TwoWireDevice::readreg(const uint8_t reg, uint8_t *buf, const uint8_t num)
 		_beginTransmission();
 		_wire.write(reg + pos);
 		_last_error = _wire.endTransmission();
+		if(_last_error)
+			return;
 		//TODO: check requestFrom result?
 		_requestFrom(read_now);
 
