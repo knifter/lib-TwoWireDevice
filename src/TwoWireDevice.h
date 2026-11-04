@@ -56,7 +56,7 @@ class TwoWireDevice
         void	  write(const uint8_t* buf, const uint8_t num);
         void 	  readreg(const uint8_t reg, uint8_t *buf, const uint8_t num);
         void 	  writereg(const uint8_t reg, const uint8_t *buf, const uint8_t num);
-        void 	  writereg(const uint8_t reg);
+        inline void writereg0(const uint8_t reg) { write8(reg); };
 
         // 8-bit
         uint8_t   read8();

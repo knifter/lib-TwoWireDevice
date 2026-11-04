@@ -331,9 +331,3 @@ void TwoWireDevice::writereg(const uint8_t reg, const uint8_t *buf, const uint8_
 	_wire.write(buf, num);
 	_last_error = _wire.endTransmission();
 };
-
-void TwoWireDevice::writereg(const uint8_t reg)
-{
-	_beginTransmission();
-	_last_error = _wire.endTransmission();
-};
